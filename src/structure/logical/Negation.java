@@ -1,11 +1,14 @@
 package structure.logical;
 
+import structure.Entity;
+import structure.UnaryEntity;
+
 /**
  * Created by Антон on 02.01.2017.
  */
-public class Negation extends UnaryLogicalEntity {
+public class Negation extends UnaryEntity {
 
-    Negation(LogicalEntity operand) {
+    public Negation(Entity operand) {
         super(operand);
     }
 

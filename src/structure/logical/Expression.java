@@ -1,11 +1,14 @@
 package structure.logical;
 
+import structure.Entity;
+import structure.UnaryEntity;
+
 /**
  * Created by Антон on 02.01.2017.
  */
-public class Expression extends UnaryLogicalEntity {
+public class Expression extends UnaryEntity {
 
-    Expression(LogicalEntity operand) {
+    public Expression(Entity operand) {
         super(operand);
     }
 

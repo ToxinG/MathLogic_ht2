@@ -1,13 +1,15 @@
 package structure.arithmetic;
 
+import structure.Entity;
+
 import java.util.ArrayList;
 
 /**
  * Created by Антон on 02.01.2017.
  */
-public class Function implements ArithmeticEntity {
+public class Function implements Entity {
     public String name;
-    public ArrayList<ArithmeticEntity> operands;
+    public ArrayList<Entity> operands;
 
     @Override
     public String toString() {

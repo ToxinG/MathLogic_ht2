@@ -1,11 +1,14 @@
 package structure.logical;
 
+import structure.BinaryEntity;
+import structure.Entity;
+
 /**
  * Created by Антон on 02.01.2017.
  */
-public class Implication extends BinaryLogicalEntity {
+public class Implication extends BinaryEntity {
 
-    public Implication(LogicalEntity leftOperand, LogicalEntity rightOperand) {
+    public Implication(Entity leftOperand, Entity rightOperand) {
         super(leftOperand, rightOperand);
     }
 

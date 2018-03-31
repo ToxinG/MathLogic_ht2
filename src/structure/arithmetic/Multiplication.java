@@ -1,11 +1,14 @@
 package structure.arithmetic;
 
+import structure.BinaryEntity;
+import structure.Entity;
+
 /**
  * Created by Антон on 02.01.2017.
  */
-public class Multiplication extends BinaryArithmeticEntity {
+public class Multiplication extends BinaryEntity {
 
-    Multiplication(ArithmeticEntity leftOperand, ArithmeticEntity rightOperand) {
+    public Multiplication(Entity leftOperand, Entity rightOperand) {
         super(leftOperand, rightOperand);
     }
 

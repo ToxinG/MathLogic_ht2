@@ -1,16 +1,17 @@
 package structure.logical;
 
-import structure.arithmetic.ArithmeticEntity;
+import structure.Entity;
+import structure.UnaryEntity;
 
 /**
  * Created by Антон on 02.01.2017.
  */
-public class Formula extends UnaryLogicalEntity {
+public class Formula extends UnaryEntity {
 
     private String type;
-    private ArithmeticEntity variable;
+    private Entity variable;
 
-    Formula (String type, ArithmeticEntity variable, UnaryLogicalEntity operand) {
+    public Formula (String type, Entity variable, Entity operand) {
         super(operand);
         this.type = type;
         this.variable = variable;

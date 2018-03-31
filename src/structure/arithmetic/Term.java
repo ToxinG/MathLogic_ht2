@@ -1,11 +1,14 @@
 package structure.arithmetic;
 
+import structure.Entity;
+import structure.UnaryEntity;
+
 /**
  * Created by Антон on 02.01.2017.
  */
-public class Term extends UnaryArithmeticEntity {
+public class Term extends UnaryEntity {
 
-    Term(ArithmeticEntity operand) {
+    Term(Entity operand) {
         super(operand);
     }
 

@@ -1,11 +1,14 @@
 package structure.arithmetic;
 
+import structure.Entity;
+import structure.UnaryEntity;
+
 /**
  * Created by Антон on 02.01.2017.
  */
-public class Increment extends UnaryArithmeticEntity {
+public class Increment extends UnaryEntity {
 
-    Increment(ArithmeticEntity operand) {
+    public Increment(Entity operand) {
         super(operand);
     }
 

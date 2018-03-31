@@ -1,16 +1,16 @@
 package structure.logical;
 
-import structure.arithmetic.ArithmeticEntity;
+import structure.Entity;
 
 import java.util.ArrayList;
 
 /**
  * Created by Антон on 02.01.2017.
  */
-public class Predicate implements LogicalEntity {
-    public String name;
-    public String type;
-    public ArrayList<ArithmeticEntity> operands;
+public class Predicate implements Entity {
+    public String name = "";
+    public String type = "";
+    public ArrayList<Entity> operands;
 
     @Override
     public String toString() {
@@ -20,7 +20,7 @@ public class Predicate implements LogicalEntity {
             return name;
         } else {
             String res = name;
-            name += "(";
+            res += "(";
             for (int i = 0; i < operands.size() - 1; i++) {
                 res += operands.get(i).toString();
                 res += ", ";
