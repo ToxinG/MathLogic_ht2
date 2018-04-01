@@ -101,25 +101,25 @@ public class Tokenizer {
             }
         }
 
-        String name = "";
+        StringBuilder name = new StringBuilder();
 
         if (isUpperCase(expr.charAt(exprIndex))) {
-            name += expr.charAt(exprIndex);
+            name.append(expr.charAt(exprIndex));
             exprIndex++;
             while (isDigit(expr.charAt(exprIndex))) {
-                name += expr.charAt(exprIndex);
+                name.append(expr.charAt(exprIndex));
                 exprIndex++;
             }
             type = TokenType.PRED;
-            currentToken = name;
+            currentToken = name.toString();
             return;
         }
 
         if (isLowerCase(expr.charAt(exprIndex))) {
-            name += expr.charAt(exprIndex);
+            name.append(expr.charAt(exprIndex));
             exprIndex++;
             while (isDigit(expr.charAt(exprIndex))) {
-                name += expr.charAt(exprIndex);
+                name.append(expr.charAt(exprIndex));
                 exprIndex++;
             }
             if (expr.charAt(exprIndex) == '(') {
@@ -127,16 +127,16 @@ public class Tokenizer {
             } else {
                 type = TokenType.VAR;
             }
-            currentToken = name;
+            currentToken = name.toString();
             return;
         }
 
         if (isDigit(expr.charAt(exprIndex))) {
             while (isDigit(expr.charAt(exprIndex))) {
-                name += expr.charAt(exprIndex);
+                name.append(expr.charAt(exprIndex));
                 exprIndex++;
             }
-            currentToken = name;
+            currentToken = name.toString();
             type = TokenType.CONST;
             return;
         }
