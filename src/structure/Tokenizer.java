@@ -15,12 +15,17 @@ public class Tokenizer {
 
     private String expr;
     private int exprIndex;
-    public String currentToken;
     public TokenType type;
+    public String lastVar;
+    public String lastPred;
+    public String lastConst;
 
     public Tokenizer(String expr) {
         this.expr = expr;
         this.exprIndex = 0;
+        lastVar = "";
+        lastPred = "";
+        lastConst = "";
     }
 
     public void getToken() {
@@ -101,44 +106,22 @@ public class Tokenizer {
             }
         }
 
-        StringBuilder name = new StringBuilder();
+        StringBuilder temp = new StringBuilder();
 
-        if (isUpperCase(expr.charAt(exprIndex))) {
-            name.append(expr.charAt(exprIndex));
-            exprIndex++;
-            while (isDigit(expr.charAt(exprIndex))) {
-                name.append(expr.charAt(exprIndex));
-                exprIndex++;
+        if (Character.isLowerCase(expr.charAt(exprIndex)) ||
+                (Character.isDigit(expr.charAt(exprIndex)) && type == TokenType.VAR)) {
+            while (exprIndex < expr.length() && (Character.isLowerCase(expr.charAt(exprIndex))) ||
+                    Character.isDigit(expr.charAt(exprIndex))) {
+                temp.append(expr.charAt(exprIndex++));
+                if (exprIndex >= expr.length())
+                    break;
             }
-            type = TokenType.PRED;
-            currentToken = name.toString();
-            return;
-        }
+            if (expr.charAt(exprIndex) == '(' && type != TokenType.ANY && type != TokenType.EXIST) {
+                if (expr.charAt(exprIndex - 1) == '(' && (expr.charAt(exprIndex - 2) == '@' ||
+                        expr.charAt(exprIndex - 2) == '?')) {
 
-        if (isLowerCase(expr.charAt(exprIndex))) {
-            name.append(expr.charAt(exprIndex));
-            exprIndex++;
-            while (isDigit(expr.charAt(exprIndex))) {
-                name.append(expr.charAt(exprIndex));
-                exprIndex++;
+                }
             }
-            if (expr.charAt(exprIndex) == '(') {
-                type = TokenType.FN;
-            } else {
-                type = TokenType.VAR;
-            }
-            currentToken = name.toString();
-            return;
-        }
-
-        if (isDigit(expr.charAt(exprIndex))) {
-            while (isDigit(expr.charAt(exprIndex))) {
-                name.append(expr.charAt(exprIndex));
-                exprIndex++;
-            }
-            currentToken = name.toString();
-            type = TokenType.CONST;
-            return;
         }
     }
 }
