@@ -108,10 +108,10 @@ public class Tokenizer {
 
         StringBuilder temp = new StringBuilder();
 
-        if (Character.isLowerCase(expr.charAt(exprIndex)) ||
-                (Character.isDigit(expr.charAt(exprIndex)) && type == TokenType.VAR)) {
-            while (exprIndex < expr.length() && (Character.isLowerCase(expr.charAt(exprIndex))) ||
-                    Character.isDigit(expr.charAt(exprIndex))) {
+        if (isLowerCase(expr.charAt(exprIndex)) ||
+                (isDigit(expr.charAt(exprIndex)) && type == TokenType.VAR)) {
+            while (exprIndex < expr.length() && (isLowerCase(expr.charAt(exprIndex))) ||
+                    isDigit(expr.charAt(exprIndex))) {
                 temp.append(expr.charAt(exprIndex++));
                 if (exprIndex >= expr.length())
                     break;
@@ -119,9 +119,35 @@ public class Tokenizer {
             if (expr.charAt(exprIndex) == '(' && type != TokenType.ANY && type != TokenType.EXIST) {
                 if (expr.charAt(exprIndex - 1) == '(' && (expr.charAt(exprIndex - 2) == '@' ||
                         expr.charAt(exprIndex - 2) == '?')) {
-
+                    lastVar = temp.toString();
                 }
+                type = TokenType.FN;
+                lastPred = temp.toString();
+            } else {
+                type = TokenType.VAR;
+                lastVar = temp.toString();
             }
+            return;
+        }
+
+        if (isUpperCase(expr.charAt(exprIndex)) || (isDigit(expr.charAt(exprIndex)) && type == TokenType.PRED)) {
+            type = TokenType.PRED;
+            while (exprIndex < expr.length() && isUpperCase(expr.charAt(exprIndex)) || isDigit(expr.charAt(exprIndex))) {
+                lastPred = String.valueOf(expr.charAt(exprIndex++));
+                if (exprIndex >= expr.length())
+                    return;
+            }
+            return;
+        }
+
+        if (isDigit(expr.charAt(exprIndex))) {
+            type = TokenType.CONST;
+            while (exprIndex < expr.length() && isDigit(expr.charAt(exprIndex))) {
+                lastConst = String.valueOf(expr.charAt(exprIndex++));
+                if (exprIndex >= expr.length())
+                    return;
+            }
+            return;
         }
     }
 }
