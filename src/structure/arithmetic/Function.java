@@ -11,6 +11,11 @@ public class Function implements Entity {
     public String name;
     public ArrayList<Entity> operands;
 
+    public Function(String name, ArrayList<Entity> operands) {
+        this.name = name;
+        this.operands = operands;
+    }
+
     @Override
     public String toString() {
         if (operands.size() == 0) {

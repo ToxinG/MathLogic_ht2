@@ -7,8 +7,14 @@ import structure.Entity;
  */
 public class Constant implements Entity {
 
+    public String name;
+
+    public Constant(String name) {
+        this.name = name;
+    }
+
     @Override
     public String toString() {
-        return "0";
+        return name;
     }
 }

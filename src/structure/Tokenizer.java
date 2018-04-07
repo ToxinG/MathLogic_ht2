@@ -19,6 +19,7 @@ public class Tokenizer {
     public String lastVar;
     public String lastPred;
     public String lastConst;
+    public String lastFunc;
 
     public Tokenizer(String expr) {
         this.expr = expr;
@@ -122,7 +123,7 @@ public class Tokenizer {
                     lastVar = temp.toString();
                 }
                 type = TokenType.FN;
-                lastPred = temp.toString();
+                lastFunc = temp.toString();
             } else {
                 type = TokenType.VAR;
                 lastVar = temp.toString();

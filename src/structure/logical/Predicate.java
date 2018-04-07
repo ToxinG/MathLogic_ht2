@@ -8,15 +8,17 @@ import java.util.ArrayList;
  * Created by Антон on 02.01.2017.
  */
 public class Predicate implements Entity {
-    public String name = "";
-    public String type = "";
+    public String name;
     public ArrayList<Entity> operands;
+
+    public Predicate(String name, ArrayList<Entity> operands) {
+        this.name = name;
+        this.operands = operands;
+    }
 
     @Override
     public String toString() {
-        if (type.equals("=")) {
-            return "(" + operands.get(0).toString() + "=" + operands.get(1).toString();
-        } else if (operands.size() == 0) {
+        if (operands.size() == 0) {
             return name;
         } else {
             String res = name;
