@@ -2,8 +2,12 @@ import structure.*;
 import structure.logical.*;
 import structure.arithmetic.*;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 import java.util.stream.Collectors;
 
 /**
@@ -361,6 +365,33 @@ public class ProofChecker {
             }
         }
         return flag;
+    }
+
+    public ArrayList<String> replaceFromRules(Path path, ArrayList<String> names) {
+        ArrayList<String> arrayList = new ArrayList<>();
+        try (Scanner in = new Scanner(new File(path.toString()))) {
+            while (in.hasNext()) {
+                String str = in.next();
+                str = str.replace("B", "K1");
+                str = str.replace("C", "K2");
+                str = str.replace("x", "K3");
+                str = str.replace("A", "(" + (names.get(0)) + ")");
+                if (names.size() > 1) {
+                    str = str.replace("K1", "(" + names.get(1) + ")");
+                }
+                if (names.size() > 2) {
+                    str = str.replace("K2", "(" + names.get(2) + ")");
+                }
+                if (names.size() > 3) {
+                    str = str.replace("K3", names.get(3));
+                }
+                arrayList.add(str);
+            }
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        return arrayList;
     }
 
 }

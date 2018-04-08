@@ -1,7 +1,9 @@
 import structure.Entity;
+import structure.logical.*;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Антон on 06.01.2017.
@@ -20,6 +22,8 @@ public class Main {
     private static Entity[] axA = new Entity[9];
     private static ArrayList<String> proofs = new ArrayList<>();
     private static ArrayList<Entity> checkedProofs = new ArrayList<>();
+    private static HashMap<String, Entity> exprMap;
+    private static String inference;
     private static int proofNumber = 1;
 
     public static void main(String[] args) throws IOException {
@@ -33,7 +37,13 @@ public class Main {
             e.printStackTrace();
         }
 
-        String inference = reader.readLine();
+        for(int i = 0; i < Axioms.logicalAxioms.length; i++)
+            axL[i + 1] = parser.parseExpression(Axioms.logicalAxioms[i]);
+
+        for(int i = 0; i < Axioms.arithmeticAxioms.length; i++)
+            axA[i + 1] = parser.parseExpression(Axioms.arithmeticAxioms[i]);
+
+        inference = reader.readLine();
         writer.println(inference);
         inference = inference.replaceAll("\\s", "");
 
@@ -86,6 +96,7 @@ public class Main {
                     writer.write("(" + proofNumber++ + ") " + currStage + " (Aкс. " + (j) + ")" + "\n");
                     checkedProofs.add(currExpr);
                     flag2 = true;
+                    break;
                 }
             if (flag2)
                 continue;
@@ -121,35 +132,128 @@ public class Main {
             currExprCopy = currExpr.newInstance();
 
             int[] MP = checkModusPonens(currExprCopy);
+            if (MP[0] > -1) {
+                writer.write("(" + proofNumber++ + ") " + currStage +
+                        " (M.P. " + ++MP[0] + ", " + ++MP[1] + ")" + "\n");
+                checkedProofs.add(currExprCopy);
+                continue;
+            }
+
+            writer.write("(" + proofNumber + ") " + currStage +
+                    " Вывод некорректен, начиная с формулы №" + proofNumber++);
+
+            reportMistake(currExprCopy, currStage);
+
+            System.out.println("End of proof (HW2).\n[Time = " +
+                    (System.currentTimeMillis() - time) + "ms]");
+
+            writer.close();
+            reader.close();
+            return;
         }
+
+        if (hypList.isEmpty()) {
+            printOriginalProof();
+        } else {
+            printDeduction();
+        }
+        System.out.println("End of proof (HW2).\n[Time = " +
+                (System.currentTimeMillis() - time) + "ms]");
+
+        writer.close();
+        reader.close();
     }
 
     private static int[] checkModusPonens(Entity e) {
-
+        int to = -1;
+        int from = -1;
+        for (int i = checkedProofs.size() - 1; i >= 0; i--) {
+            Entity e1 = checkedProofs.get(i);
+            if (e1 instanceof Implication && checker.entityEquality(e, ((Implication) e1).rightOperand)) {
+                for (int j = checkedProofs.size() - 1; j >= 0; j--) {
+                    exprMap = new HashMap<>();
+                    if (checker.entityConformity(((Implication) e1).leftOperand, checkedProofs.get(j), exprMap)) {
+                        from = i;
+                        to = j;
+                        break;
+                    }
+                }
+                if (to > -1)
+                    break;
+            }
+        }
+        return new int[]{to, from};
     }
 
-    static void parseAxL() {
-        axL[1] = parser.parseExpression("a->(b->a)");
-        axL[2] = parser.parseExpression("(a->b)->(a->(b->c))->(a->c)");
-        axL[3] = parser.parseExpression("a->b->a&b");
-        axL[4] = parser.parseExpression("a&b->a");
-        axL[5] = parser.parseExpression("a&b->b");
-        axL[6] = parser.parseExpression("a->a|b");
-        axL[7] = parser.parseExpression("b->a|b");
-        axL[8] = parser.parseExpression("(a->c)->(b->c)->(a|b->c)");
-        axL[9] = parser.parseExpression("(a->b)->(a->!b)->!a");
-        axL[10] = parser.parseExpression("!!a->a");
+    private static void reportMistake(Entity e, String string) {
+        if (checker.any && checker.anyHyp) {
+            writer.write(": используется правило с квантором по переменной " +
+                    ((Any) ((Implication) e).rightOperand).variable.name + " входящей свободно в допущение " +
+                    hypList.get(hypList.size() - 1));
+        } else if (checker.any) {
+            writer.write(": Переменная " + ((Any) ((Implication) e).rightOperand).variable.name +
+                    " входит свободно в формулу " + (((Implication) e).leftOperand) + "\n");
+        }
+
+        if (checker.exist && checker.existHyp) {
+            writer.write(": используется правило с квантором по переменной " +
+                    ((Exist) ((Implication) e).leftOperand).variable.name + " входящей свободно в допущение " +
+                    hypList.get(hypList.size() - 1));
+        } else if (checker.exist) {
+            writer.write(": Переменная " + ((Exist) ((Implication) e).leftOperand).variable.name +
+                    " входит свободно в формулу " + (((Implication) e).rightOperand) + "\n");
+        }
+
+        if (checker.changing) {
+            Entity e1 = null, e2 = null;
+            if (e instanceof Implication && ((Implication) e).leftOperand instanceof Any) {
+                checker.entityConformity(((Implication) e).rightOperand,
+                        ((Any) ((Implication) e).leftOperand).operand, exprMap);
+                e1 = exprMap.get((exprMap.keySet().toArray()[0]));
+                e2 = ((Any) ((Implication) e).leftOperand).variable;
+            } else if (e instanceof Implication && ((Implication) e).leftOperand instanceof Exist) {
+                checker.entityConformity(((Implication) e).leftOperand,
+                        ((Exist) ((Implication) e).rightOperand).operand, exprMap);
+                e1 = exprMap.get(((Exist) ((Implication) e).rightOperand).variable.name);
+                e2 = ((Exist) ((Implication) e).rightOperand).variable;
+            }
+
+            writer.write(": Терм " + e1 + " не свободен для подстановки в формулу " +
+                    string + " вместо переменной " + e2 + "\n");
+        }
     }
 
-    static void parseAxA() {
-        axA[1] = parser.parseExpression("a=b->a'=b'");
-        axA[2] = parser.parseExpression("(a=b)->(a=c)->(b=c)");
-        axA[3] = parser.parseExpression("a'=b'->a=b");
-        axA[4] = parser.parseExpression("!a'=0");
-        axA[5] = parser.parseExpression("a+b'=(a+b)'");
-        axA[6] = parser.parseExpression("a+0=a");
-        axA[7] = parser.parseExpression("a*0=0");
-        axA[8] = parser.parseExpression("a*b'=a*b+a");
+    private static void printOriginalProof() throws IOException {
+        reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"));
+        try {
+            writer = new PrintWriter(new FileWriter(outputFile));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String tempLine = reader.readLine();
+        while (tempLine != null) {
+            writer.println(tempLine);
+            tempLine = reader.readLine();
+        }
     }
 
+    private static void printDeduction() throws IOException {
+        if (writer != null) {
+            writer.close();
+        }
+        reader = new BufferedReader(new InputStreamReader(new FileInputStream(inputFile), "UTF-8"));
+        try {
+            writer = new PrintWriter(new FileWriter(outputFile));
+        } catch (UnsupportedEncodingException | FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        DeductionGenerator dg = new DeductionGenerator();
+        try {
+            ArrayList<String> str = dg.deduct(inference, proofs);
+            str.stream().forEach((s) -> { writer.write(s + "\n"); });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }
