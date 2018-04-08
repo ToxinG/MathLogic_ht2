@@ -16,4 +16,9 @@ public class Disjunction extends BinaryEntity {
     public String toString() {
         return "(" + leftOperand.toString() + "|" + rightOperand.toString() + ")";
     }
+
+    @Override
+    public Entity newInstance() {
+        return new Disjunction(leftOperand.newInstance(), rightOperand.newInstance());
+    }
 }

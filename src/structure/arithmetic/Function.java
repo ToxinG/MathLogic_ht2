@@ -25,11 +25,16 @@ public class Function implements Entity {
             name += "(";
             for (int i = 0; i < operands.size() - 1; i++) {
                 res += operands.get(i).toString();
-                res += ", ";
+                res += ",";
             }
             res += operands.get(operands.size() - 1);
             res += ")";
             return res;
         }
+    }
+
+    @Override
+    public Entity newInstance() {
+        return new Function(name, (ArrayList<Entity>) operands.clone());
     }
 }

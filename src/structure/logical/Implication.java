@@ -16,4 +16,9 @@ public class Implication extends BinaryEntity {
     public String toString() {
         return "(" + leftOperand.toString() + "->" + rightOperand.toString() + ")";
     }
+
+    @Override
+    public Entity newInstance() {
+        return new Implication(leftOperand.newInstance(), rightOperand.newInstance());
+    }
 }

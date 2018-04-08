@@ -16,4 +16,9 @@ public class Multiplication extends BinaryEntity {
     public String toString() {
         return "(" + leftOperand.toString() + "*" + rightOperand.toString() + ")";
     }
+
+    @Override
+    public Entity newInstance() {
+        return new Multiplication(leftOperand.newInstance(), rightOperand.newInstance());
+    }
 }

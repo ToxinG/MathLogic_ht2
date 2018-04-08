@@ -3,10 +3,7 @@ import structure.arithmetic.*;
 import structure.logical.*;
 import structure.Tokenizer.TokenType;
 
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Stack;
 
@@ -108,7 +105,7 @@ private Entity parseUnary() {
         Entity res = parseMult();
         while (tz.type == TokenType.EQUAL) {
             tz.getToken();
-            res = new Sum(res, parseMult());
+            res = new Equality(res, parseMult());
         }
         return res;
     }

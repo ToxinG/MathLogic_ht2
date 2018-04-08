@@ -17,4 +17,9 @@ public class Constant implements Entity {
     public String toString() {
         return name;
     }
+
+    @Override
+    public Entity newInstance() {
+        return new Constant(name);
+    }
 }

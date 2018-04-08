@@ -16,4 +16,9 @@ public class Increment extends UnaryEntity {
     public String toString() {
         return operand.toString() + "'";
     }
+
+    @Override
+    public Entity newInstance() {
+        return new Increment(operand.newInstance());
+    }
 }

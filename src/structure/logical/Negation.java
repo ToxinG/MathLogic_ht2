@@ -16,4 +16,9 @@ public class Negation extends UnaryEntity {
     public String toString() {
         return "!" + operand.toString();
     }
+
+    @Override
+    public Entity newInstance() {
+        return new Negation(operand.newInstance());
+    }
 }

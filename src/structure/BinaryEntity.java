@@ -1,8 +1,8 @@
 package structure;
 
 public abstract class BinaryEntity implements Entity {
-    public final Entity leftOperand;
-    public final Entity rightOperand;
+    public Entity leftOperand;
+    public Entity rightOperand;
 
     public BinaryEntity (Entity leftOperand, Entity rightOperand) {
         this.leftOperand = leftOperand;

@@ -7,12 +7,13 @@ import structure.Variable;
 /**
  * Created by Антон on 02.01.2017.
  */
-public abstract class Quantifier extends UnaryEntity {
+public abstract class Quantifier implements Entity {
 
-    protected Variable variable;
+    public Variable variable;
+    public Entity operand;
 
     public Quantifier(Variable variable, Entity operand) {
-        super(operand);
         this.variable = variable;
+        this.operand = operand;
     }
 }

@@ -9,7 +9,13 @@ public class Any extends Quantifier {
         super(variable, operand);
     }
 
+    @Override
     public String toString() {
         return "@" + variable.toString() + "(" + operand.toString() + ")";
+    }
+
+    @Override
+    public Entity newInstance() {
+        return new Any((Variable) variable.newInstance(), operand.newInstance());
     }
 }
