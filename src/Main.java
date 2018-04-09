@@ -72,7 +72,7 @@ public class Main {
             currExpr = parser.parseExpression(currStage);
             checker.changing = false;
             boolean flag1 = false;
-            if (hypList.get(0) != null)
+            if (!hypList.isEmpty())
                 for (int i = 0; i < hypList.size(); i++)
                     if (checker.entityEquality(hypList.get(i), currExpr)) {
                         writer.write("(" + proofNumber++ + ") " + currStage + " (Предп. " + (i + 1) + ")" + "\n");
@@ -83,38 +83,47 @@ public class Main {
             if (flag1)
                 continue;
 
-            int axNumber = checker.checkAxioms(currExpr, axL);
+            Entity currExprCopy = currExpr.newInstance();
+
+
+            int axNumber = checker.checkAxioms(currExprCopy, axL);
             if (axNumber > 0) {
                 writer.write("(" + proofNumber++ + ") " + currStage + " (Сх. акс. " + axNumber + ")" + "\n");
                 checkedProofs.add(currExpr);
                 continue;
             }
 
+            currExprCopy = currExpr.newInstance();
+
             boolean flag2 = false;
-            for (int j = 1; j < axA.length; j++)
-                if (checker.entityEquality(axA[j], currExpr)) {
+            for (int j = 1; j < axA.length; j++) {
+                exprMap = new HashMap<>();
+                if (checker.entityConformity(axA[j], currExprCopy, exprMap)) {
                     writer.write("(" + proofNumber++ + ") " + currStage + " (Aкс. " + (j) + ")" + "\n");
                     checkedProofs.add(currExpr);
                     flag2 = true;
                     break;
                 }
+            }
             if (flag2)
                 continue;
 
-            if (checker.checkAxiomA9(currExpr)) {
+            currExprCopy = currExpr.newInstance();
+
+            if (checker.checkAxiomA9(currExprCopy)) {
                 writer.write("(" + proofNumber++ + ") " + currStage + " (Схема аксиом A9)" + "\n");
                 checkedProofs.add(currExpr);
                 continue;
             }
 
-            Entity currExprCopy = currExpr.newInstance();
+            currExprCopy = currExpr.newInstance();
 
             checker.any = false;
             checker.anyHyp = false;
             int index = checker.checkAny(currExprCopy, checkedProofs, hypList);
             if (index > -1) {
                 writer.write("(" + proofNumber++ + ") " + currStage + " (Введение квантора всеобщности)" + "\n");
-                checkedProofs.add(currExprCopy);
+                checkedProofs.add(currExpr);
                 continue;
             }
 
@@ -125,7 +134,7 @@ public class Main {
             index = checker.checkExist(currExprCopy, checkedProofs, hypList);
             if (index > -1) {
                 writer.write("(" + proofNumber++ + ") " + currStage + " (Введение квантора существования)" + "\n");
-                checkedProofs.add(currExprCopy);
+                checkedProofs.add(currExpr);
                 continue;
             }
 
@@ -135,9 +144,11 @@ public class Main {
             if (MP[0] > -1) {
                 writer.write("(" + proofNumber++ + ") " + currStage +
                         " (M.P. " + ++MP[0] + ", " + ++MP[1] + ")" + "\n");
-                checkedProofs.add(currExprCopy);
+                checkedProofs.add(currExpr);
                 continue;
             }
+
+
 
             writer.write("(" + proofNumber + ") " + currStage +
                     " Вывод некорректен, начиная с формулы №" + proofNumber++);
