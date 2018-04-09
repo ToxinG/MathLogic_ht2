@@ -109,15 +109,14 @@ public class Tokenizer {
 
         StringBuilder temp = new StringBuilder();
 
-        if (isLowerCase(expr.charAt(exprIndex)) ||
-                (isDigit(expr.charAt(exprIndex)) && type == TokenType.VAR)) {
+        if (isLowerCase(expr.charAt(exprIndex)) || (isDigit(expr.charAt(exprIndex)) && type == TokenType.VAR)) {
             while (exprIndex < expr.length() && (isLowerCase(expr.charAt(exprIndex))) ||
                     isDigit(expr.charAt(exprIndex))) {
                 temp.append(expr.charAt(exprIndex++));
                 if (exprIndex >= expr.length())
                     break;
             }
-            if (expr.charAt(exprIndex) == '(' && type != TokenType.ANY && type != TokenType.EXIST) {
+            if (exprIndex < expr.length() && expr.charAt(exprIndex) == '(' && type != TokenType.ANY && type != TokenType.EXIST) {
                 if (expr.charAt(exprIndex - 1) == '(' && (expr.charAt(exprIndex - 2) == '@' ||
                         expr.charAt(exprIndex - 2) == '?')) {
                     lastVar = temp.toString();

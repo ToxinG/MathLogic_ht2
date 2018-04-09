@@ -75,7 +75,7 @@ public class Main {
             if (hypList.get(0) != null)
                 for (int i = 0; i < hypList.size(); i++)
                     if (checker.entityEquality(hypList.get(i), currExpr)) {
-                        writer.write("(" + proofNumber++ + ") " + currStage + " (Предп. " + i + 1 + ")" + "\n");
+                        writer.write("(" + proofNumber++ + ") " + currStage + " (Предп. " + (i + 1) + ")" + "\n");
                         checkedProofs.add(currExpr);
                         flag1 = true;
                         break;
