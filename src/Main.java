@@ -14,7 +14,6 @@ public class Main {
     private static PrintWriter writer;
     private final static File inputFile = new File("test.txt");
     private final static File outputFile = new File("output.txt");
-    private static Entity target;
     private static ExpressionParser parser = new ExpressionParser();
     private static final ProofChecker checker = new ProofChecker();
     private static ArrayList<Entity> hypList = new ArrayList<>();
@@ -48,17 +47,7 @@ public class Main {
         inference = inference.replaceAll("\\s", "");
 
 
-        String formula;
-        if (inference.charAt(0) == '|') {
-            formula = inference.substring(2);
-        } else {
-            String[] hypStrings = inference.split(",");
-            String[] ending = hypStrings[hypStrings.length - 1].split("\\|-");
-            formula = ending[1];
-            hypStrings[hypStrings.length - 1] = ending[0];
-            for (String hypString : hypStrings) hypList.add(parser.parseExpression(hypString));
-        }
-        target = parser.parseExpression(formula);
+        HashMap<String, Integer> allSup = getHypotheses(inference);
 
         String currStage;
         while (reader.ready()) {
@@ -163,7 +152,7 @@ public class Main {
             return;
         }
 
-        if (hypList.isEmpty()) {
+        if (allSup.isEmpty()) {
             printOriginalProof();
         } else {
             printDeduction();
@@ -266,5 +255,44 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static HashMap<String, Integer> getHypotheses(String str) {
+
+        HashMap<String, Integer> res = new HashMap<>();
+
+        int index = 0;
+        int num = 0;
+        int countBrackets = 0;
+
+        String cur = "";
+
+        while (index < str.length()) {
+            while (str.charAt(index) == ' ') index++;
+            while (index < str.length() && (str.charAt(index) != ',' || countBrackets != 0)
+                    && index < str.length() && str.charAt(index) != '|') {
+                if (str.charAt(index) != ' ') cur += str.charAt(index);
+                if (str.charAt(index) == '(') countBrackets++;
+                if (str.charAt(index) == ')') countBrackets--;
+                index++;
+            }
+
+            if (!cur.equals("")) {
+                num++;
+                res.put(cur, num);
+            }
+
+            hypList.add(parser.parseExpression(cur));
+
+            cur = "";
+            if (index < str.length() && str.charAt(index) == ',') index++;
+            while (index < str.length() && str.charAt(index) == ' ') index++;
+            if (index < str.length() && str.charAt(index) == '|') {
+                index += 2;
+                while (str.charAt(index) == ' ') index++;
+                index = str.length();
+            }
+        }
+        return res;
     }
 }
